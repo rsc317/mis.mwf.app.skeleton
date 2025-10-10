@@ -6,6 +6,13 @@ const CircularDependencyPlugin = require('circular-dependency-plugin')
 
 module.exports = {
     mode: "development",
+    devServer: {
+        hot: true,
+        liveReload: true,
+        watchFiles: ['src/**/*'],
+        port: 8080,
+        open: true
+    },
     plugins: [
         new CircularDependencyPlugin({
             // exclude detection of files based on a RegExp
