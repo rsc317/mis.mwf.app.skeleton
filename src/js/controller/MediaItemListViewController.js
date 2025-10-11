@@ -1,25 +1,31 @@
-/**
- * @author Jörn Kreutel
- */
+
 import {mwf} from "vfh-iam-mwf-base";
 import {mwfUtils} from "vfh-iam-mwf-base";
-import * as entities from "../model/MyEntities.js";
+import * as entities from "../model/MediaItem.js";
 
-export default class ViewControllerTemplate extends mwf.ViewController {
+export default class MediaItemListViewController extends mwf.ViewController {
 
     // instance attributes set by mwf after instantiation
     args;
     root;
+    mediaItems;
     // TODO-REPEATED: declare custom instance attributes for this controller
-
     /*
      * for any view: initialise the view
      */
     async oncreate() {
-        // TODO: do databinding, set listeners, initialise the view
+        await super.oncreate();
 
-        // call the superclass once creation is done
-        super.oncreate();
+        this.mediaItems = entities.MediaItem.generateRandomItems();
+        console.log("Erzeugte MediaItems:", this.mediaItems);
+
+        const list = document.createElement("ul");
+        for (const item of this.mediaItems) {
+            const li = document.createElement("li");
+            li.textContent = `${item.title} – ${item.creationDate.toLocaleDateString()}`;
+            list.appendChild(li);
+        }
+        this.root.appendChild(list);
     }
 
 
