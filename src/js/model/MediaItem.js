@@ -2,60 +2,35 @@ import {mwfUtils} from "vfh-iam-mwf-base";
 import {EntityManager} from "vfh-iam-mwf-base";
 
 export class MediaItem extends EntityManager.Entity {
-    creationDate;
     title;
-    imageSource
+    src;
+    contentType;
+    added = Date.now();
+    description = "";
 
-    constructor(title, imageSource, creationDate) {
+    constructor(title, src, contentType) {
         super();
         this.title = title;
-        this.imageSource = imageSource;
-        this.creationDate = creationDate;
+        this.src = src;
+        this.contentType = contentType;
     }
 
-    static germanCapitals = [
-        "Berlin",
-        "Munich",
-        "Stuttgart",
-        "Düsseldorf",
-        "Wiesbaden",
-        "Mainz",
-        "Hannover",
-        "Hamburg",
-        "Dresden",
-        "Schwerin"
-    ];
-
-    static randomRecentDate() {
-        const now = new Date();
-        const timestamp = now.getTime() - Math.random();
-        return new Date(timestamp);
+    get addedDateString() {
+        return (new Date(this.added)).toLocaleDateString();
     }
 
-    static generateRandomItems() {
-        return this.germanCapitals.map(city =>
-            new MediaItem(
-                city,
-                "src/resources/ghibliMe.png",
-                this.randomRecentDate()
-            )
-        );
-    }
-
-    getFormattedDate(locale = 'de-DE') {
-        return this.creationDate.toLocaleDateString(locale, {
-            year: 'numeric',
-            month: 'numeric',
-            day: 'numeric',
-        });
-    }
-
-    async isImageReachable() {
-        try {
-            const res = await fetch(this.imageSource, { method: 'HEAD' });
-            return res.ok;
-        } catch {
-            return false;
+    get mediaType() {
+        if (this.contentType) {
+            var index = this.contentType.indexOf("/");
+            if (index > -1) {
+                return this.contentType.substring(0,index);
+            }
+            else {
+                return "UNKNOWN";
+            }
+        }
+        else {
+            return "UNKNOWN";
         }
     }
 }

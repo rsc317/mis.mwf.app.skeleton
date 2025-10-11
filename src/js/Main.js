@@ -8,10 +8,8 @@ import {GenericDialogTemplateViewController} from "vfh-iam-mwf-base";
 
 /* application libraries: the main application class */
 import MyApplication from "./MyApplication.js";
-/* application libraries: model */
-import * as entities from "./model/MediaItem.js";
 /* application libraries: view controllers */
-import MediaItemListViewController from "./controller/MediaItemListViewController.js";
+import ListviewViewController from "./controller/ListviewViewController.js";
 
 // TODO-REPEATED: import any further view controllers here
 
@@ -21,8 +19,8 @@ mwf.app.components = {
     GenericDialogTemplateViewController,
     /* application modules */
     MyApplication,
-    MediaItemListViewController
     // TODO-REPEATED: export any further view controllers here
+    ListviewViewController
 }
 
 // then start the application

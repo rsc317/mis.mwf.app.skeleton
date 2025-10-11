@@ -1,38 +1,34 @@
-
-import {mwf} from "vfh-iam-mwf-base";
+import {EntityManager, mwf} from "vfh-iam-mwf-base";
 import {mwfUtils} from "vfh-iam-mwf-base";
 import * as entities from "../model/MediaItem.js";
 
-export default class MediaItemListViewController extends mwf.ViewController {
+export default class ListviewViewController extends mwf.ViewController {
 
     // instance attributes set by mwf after instantiation
     args;
     root;
-    mediaItems;
-    // TODO-REPEATED: declare custom instance attributes for this controller
+    items;
+    addNewMediaItemElement
     /*
      * for any view: initialise the view
      */
     async oncreate() {
-        await super.oncreate();
-
-        this.mediaItems = entities.MediaItem.generateRandomItems();
-        console.log("Erzeugte MediaItems:", this.mediaItems);
-
-        const list = document.createElement("ul");
-        for (const item of this.mediaItems) {
-            const li = document.createElement("li");
-            li.textContent = `${item.title} – ${item.creationDate.toLocaleDateString()}`;
-            list.appendChild(li);
-        }
-        this.root.appendChild(list);
+        this.initialiseListview(this.items);
+        super.oncreate();
     }
 
 
     constructor() {
         super();
-
-        console.log("ViewControllerTemplate()");
+        console.log("ListviewViewController()");
+        this.items = [
+            new
+            entities.MediaItem("m1","https://picsum.photos/100/100"),
+            new
+            entities.MediaItem("m2","https://picsum.photos/200/150"),
+            new
+            entities.MediaItem("m3","https://picsum.photos/150/200")
+        ];
     }
 
     /*
@@ -43,20 +39,12 @@ export default class MediaItemListViewController extends mwf.ViewController {
         // TODO: check from which view, and possibly with which status, we are returning, and handle returnValue accordingly
     }
 
-    /*
-     * for views with listviews: bind a list item to an item view
-     * TODO: delete if no listview is used or if databinding uses ractive templates
-     */
     bindListItemView(listviewid, itemview, itemobj) {
-        // TODO: implement how attributes of itemobj shall be displayed in itemview
+
     }
 
-    /*
-     * for views with listviews: react to the selection of a listitem
-     * TODO: delete if no listview is used or if item selection is specified by targetview/targetaction
-     */
     onListItemSelected(itemobj, listviewid) {
-        // TODO: implement how selection of itemobj shall be handled
+        console.log("Ausgewähltes Element:", itemobj);
     }
 
     /*
