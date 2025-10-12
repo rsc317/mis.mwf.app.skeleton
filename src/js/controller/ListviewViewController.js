@@ -1,6 +1,5 @@
-import {EntityManager, mwf} from "vfh-iam-mwf-base";
-import {mwfUtils} from "vfh-iam-mwf-base";
-import * as entities from "../model/MediaItem.js";
+import {mwf} from "vfh-iam-mwf-base";
+import {MediaItem} from "../model/MediaItem.js";
 
 export default class ListviewViewController extends mwf.ViewController {
 
@@ -8,51 +7,46 @@ export default class ListviewViewController extends mwf.ViewController {
     args;
     root;
     items;
-    addNewMediaItemElement
+    addNewMediaItemElement;
     /*
      * for any view: initialise the view
      */
     async oncreate() {
-        this.initialiseListview(this.items);
+
+        this.addNewMediaItemElement = this.root.querySelector("#addNewMediaItem");
+
+        this.addNewMediaItemElement.onclick = (() => {
+            this.createNewItem();
+        });
+
+        this.addListener(new mwf.EventMatcher("crud","created","MediaItem"), ((event) => {
+                this.addToListview(event.data);
+            })
+        );
+        this.addListener(new mwf.EventMatcher("crud","updated","MediaItem"), ((event) => {
+                this.updateInListview(event.data._id, event.data);
+            })
+        );
+        this.addListener(new mwf.EventMatcher("crud","deleted","MediaItem"), ((event) => {
+                this.removeFromListview(event.data);
+            })
+        );
+
+        MediaItem.readAll().then((items) => {
+            this.initialiseListview(items);
+        })
+
         super.oncreate();
     }
-
 
     constructor() {
         super();
         console.log("ListviewViewController()");
-        this.items = [
-            new
-            entities.MediaItem("m1","https://picsum.photos/100/100"),
-            new
-            entities.MediaItem("m2","https://picsum.photos/200/150"),
-            new
-            entities.MediaItem("m3","https://picsum.photos/150/200")
-        ];
-    }
-
-    /*
-     * for views that initiate transitions to other views
-     * NOTE: return false if the view shall not be returned to, e.g. because we immediately want to display its previous view. Otherwise, do not return anything.
-     */
-    async onReturnFromNextView(nextviewid, returnValue, returnStatus) {
-        // TODO: check from which view, and possibly with which status, we are returning, and handle returnValue accordingly
-    }
-
-    bindListItemView(listviewid, itemview, itemobj) {
-
     }
 
     onListItemSelected(itemobj, listviewid) {
+        this.nextView("mediaReadview",{item: itemobj});
         console.log("Ausgewähltes Element:", itemobj);
-    }
-
-    /*
-     * for views with listviews: react to the selection of a listitem menu option
-     * TODO: delete if no listview is used or if item selection is specified by targetview/targetaction
-     */
-    onListItemMenuItemSelected(menuitemview, itemobj, listview) {
-        // TODO: implement how selection of the option menuitemview for itemobj shall be handled
     }
 
     /*
@@ -66,4 +60,44 @@ export default class ListviewViewController extends mwf.ViewController {
         // TODO: implement action bindings for dialog, accessing dialog.root
     }
 
+    // CRUD FUNCTIONS
+
+    createNewItem() {
+        const newItem = new MediaItem("", "https://picsum.photos/400/400");
+
+        this.showDialog("mediaItemDialog",{
+            item: newItem,
+            actionBindings: {
+                submitForm: ((event) => {
+                    event.original.preventDefault();
+                    newItem.create().then(() => {
+                    });
+                    this.hideDialog();
+                })
+            }
+        });
+    }
+
+    deleteItem(item) {
+        item.delete().then(() => {
+        });
+    }
+
+    editItem(item) {
+        this.showDialog("mediaItemDialog", {
+            item: item,
+            actionBindings: {
+                submitForm: ((event) => {
+                    event.original.preventDefault();
+                    item.update().then(() => {
+                    });
+                    this.hideDialog();
+                }),
+                deleteItem: ((event) => {
+                    this.deleteItem(item);
+                    this.hideDialog();
+                })
+            }
+        });
+    }
 }

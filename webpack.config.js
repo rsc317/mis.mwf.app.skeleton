@@ -5,6 +5,7 @@ const CopyPlugin = require("copy-webpack-plugin");
 const CircularDependencyPlugin = require('circular-dependency-plugin')
 
 module.exports = {
+    devtool: "source-map",
     mode: "development",
     devServer: {
         hot: true,
