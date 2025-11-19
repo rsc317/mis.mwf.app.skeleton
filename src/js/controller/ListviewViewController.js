@@ -63,7 +63,8 @@ export default class ListviewViewController extends mwf.ViewController {
     // CRUD FUNCTIONS
 
     createNewItem() {
-        const newItem = new MediaItem("", "https://picsum.photos/400/400");
+        const newItem = new MediaItem();
+        newItem.src = "https://picsum.photos/400/400";
 
         this.showDialog("mediaItemDialog",{
             item: newItem,
